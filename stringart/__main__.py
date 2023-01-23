@@ -11,11 +11,11 @@ if __name__ == '__main__':
     profiler.enable()
 
     generator = StringArtGenerator()
-    generator.load_image("demo/input/Sample_ML.jpg")
+    generator.load_image("demo/input/FullMoon2010.jpg")
     generator.preprocess()
-    generator.set_nails(180)  # 288
+    generator.set_nails(200)  # 288
     generator.set_seed(42)
-    generator.set_iterations(4000)
+    generator.set_iterations(6000)
     pattern = generator.generate()
 
     lines_x = []
