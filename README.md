@@ -1,3 +1,6 @@
+# Fork Note
+This fork was created to experiment with the original code
+
 # string-art
 
 string-art is an algorithm to construct string-art pictures.
