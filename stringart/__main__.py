@@ -14,9 +14,9 @@ if __name__ == '__main__':
     generator = StringArtGenerator()
     generator.load_image(browseFiles())
     generator.preprocess()
-    generator.set_nails(200)  # 288
+    generator.set_nails(300)
     generator.set_seed(42)
-    generator.set_iterations(500)
+    generator.set_iterations(6000)
     pattern = generator.generate()
 
     lines_x = []
@@ -44,11 +44,11 @@ if __name__ == '__main__':
     batchsize = 100  # Number of Lines per sketch
     for i in range(0, len(lines_x), batchsize):
         plt.plot(lines_x[i:i+batchsize], lines_y[i:i+batchsize],
-                 linewidth=0.075, color='k')
+                 linewidth=0.07, color='k')
         plt.draw()
         plt.pause(0.000000001)
 
-    plt.savefig('stringart/demo/MoonCropTest.png',
+    plt.savefig('stringart/demo/Output.png',
                 bbox_inches='tight', pad_inches=0)
 
     profiler.disable()

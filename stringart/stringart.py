@@ -100,8 +100,8 @@ class StringArtGenerator:
         self.data = np.flipud(np_img).transpose()
 
     def preprocess(self):
-        # Cropping
-        self.image = ImageOps.fit(self.image, (700, 700))
+        # Cropping using Lanczos filter
+        self.image = ImageOps.fit(self.image, (700, 700), Image.LANCZOS)
         # Convert image to grayscale
         self.image = ImageOps.grayscale(self.image)
         self.image = ImageOps.invert(self.image)
