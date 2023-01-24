@@ -4,6 +4,7 @@ import pstats
 import matplotlib.pyplot as plt
 
 from stringart import StringArtGenerator
+from filehandling import browseFiles
 
 if __name__ == '__main__':
 
@@ -11,11 +12,11 @@ if __name__ == '__main__':
     profiler.enable()
 
     generator = StringArtGenerator()
-    generator.load_image("demo/input/FullMoon2010.jpg")
+    generator.load_image(browseFiles())
     generator.preprocess()
-    generator.set_nails(200)  # 288
+    generator.set_nails(400)  # 288
     generator.set_seed(42)
-    generator.set_iterations(6000)
+    generator.set_iterations(10000)
     pattern = generator.generate()
 
     lines_x = []
@@ -40,14 +41,15 @@ if __name__ == '__main__':
     axes.set_aspect('equal')
     plt.draw()
 
-    batchsize = 10
+    batchsize = 100
     for i in range(0, len(lines_x), batchsize):
         plt.plot(lines_x[i:i+batchsize], lines_y[i:i+batchsize],
-                 linewidth=0.1, color='k')
+                 linewidth=0.04, color='k')
         plt.draw()
-        plt.pause(0.000001)
+        plt.pause(0.000000001)
 
-    plt.savefig('demo/result_ml.png', bbox_inches='tight', pad_inches=0)
+    plt.savefig('stringart/demo/MLTestv1.png',
+                bbox_inches='tight', pad_inches=0)
 
     profiler.disable()
     stats = pstats.Stats(profiler).sort_stats('cumtime')

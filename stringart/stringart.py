@@ -15,13 +15,13 @@ from PIL import Image, ImageOps, ImageFilter, ImageEnhance
 
 class StringArtGenerator:
     def __init__(self):
-        self.iterations = 1000
+        self.iterations = 2000
         self.shape = 'circle'
         self.image = None
         self.data = None
         self.residual = None
         self.seed = 0
-        self.nails = 100
+        self.nails = 200
         self.weight = 20
         self.nodes = []
         self.paths = []
@@ -51,19 +51,24 @@ class StringArtGenerator:
         spacing = perimeter/self.nails
         width, height = np.shape(self.data)
 
-        pnails = [ t*spacing for t in range(self.nails) ]
+        pnails = [t*spacing for t in range(self.nails)]
 
-        xarr = []; yarr = []
+        xarr = []
+        yarr = []
         for p in pnails:
-            if (p < width): # top edge
-              x = p; y = 0;
-            elif (p < width + height): # right edge
-              x = width; y = p - width;
-            elif (p < 2*width + height): # bottom edge}
-              x = width - (p - width - height); # this can obviously be simplified.
-              y = height;
-            else: # left edge
-              x = 0; y = height - (p - 2*width - height);
+            if (p < width):  # top edge
+                x = p
+                y = 0
+            elif (p < width + height):  # right edge
+                x = width
+                y = p - width
+            elif (p < 2*width + height):  # bottom edge}
+                # this can obviously be simplified.
+                x = width - (p - width - height)
+                y = height
+            else:  # left edge
+                x = 0
+                y = height - (p - 2*width - height)
             xarr.append(x)
             yarr.append(y)
 
@@ -100,6 +105,8 @@ class StringArtGenerator:
         self.image = ImageOps.invert(self.image)
         self.image = self.image.filter(ImageFilter.EDGE_ENHANCE_MORE)
         self.image = ImageEnhance.Contrast(self.image).enhance(1)
+        # Viewing Postprocessed Image
+        # self.image.save('postprocML.jpeg', 'jpeg')
         np_img = np.array(self.image)
         self.data = np.flipud(np_img).transpose()
 
@@ -147,7 +154,7 @@ class StringArtGenerator:
 
             if darkness > max_darkness:
                 darkest_path = np.zeros(np.shape(self.data))
-                darkest_path[rows,cols] = 1.0
+                darkest_path[rows, cols] = 1.0
                 darkest_nail = index
                 max_darkness = darkness
 
