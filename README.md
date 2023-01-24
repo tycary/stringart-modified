@@ -1,5 +1,5 @@
 # Fork Note
-This fork was created to experiment with the original code
+This fork was created to further the usability of the algorithm for string art pictures.
 
 # string-art
 
