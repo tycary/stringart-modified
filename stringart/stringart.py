@@ -100,13 +100,15 @@ class StringArtGenerator:
         self.data = np.flipud(np_img).transpose()
 
     def preprocess(self):
+        # Cropping
+        self.image = ImageOps.fit(self.image, (700, 700))
         # Convert image to grayscale
         self.image = ImageOps.grayscale(self.image)
         self.image = ImageOps.invert(self.image)
         self.image = self.image.filter(ImageFilter.EDGE_ENHANCE_MORE)
         self.image = ImageEnhance.Contrast(self.image).enhance(1)
         # Viewing Postprocessed Image
-        # self.image.save('postprocML.jpeg', 'jpeg')
+        self.image.save('postproc.jpeg', 'jpeg')
         np_img = np.array(self.image)
         self.data = np.flipud(np_img).transpose()
 

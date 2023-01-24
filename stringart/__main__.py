@@ -16,7 +16,7 @@ if __name__ == '__main__':
     generator.preprocess()
     generator.set_nails(200)  # 288
     generator.set_seed(42)
-    generator.set_iterations(100)
+    generator.set_iterations(500)
     pattern = generator.generate()
 
     lines_x = []
@@ -48,7 +48,7 @@ if __name__ == '__main__':
         plt.draw()
         plt.pause(0.000000001)
 
-    plt.savefig('stringart/demo/MLTestv1.png',
+    plt.savefig('stringart/demo/MoonCropTest.png',
                 bbox_inches='tight', pad_inches=0)
 
     profiler.disable()
