@@ -17,7 +17,7 @@ if __name__ == '__main__':
     generator.preprocess()
     generator.set_nails(200)
     generator.set_seed(0)
-    generator.set_iterations(100)
+    generator.set_iterations(5000)
     pattern = generator.generate(outfile)
 
     lines_x = []
@@ -45,7 +45,7 @@ if __name__ == '__main__':
     batchsize = 100  # Number of Lines per sketch
     for i in range(0, len(lines_x), batchsize):
         plt.plot(lines_x[i:i+batchsize], lines_y[i:i+batchsize],
-                 linewidth=0.07, color='k')
+                 linewidth=0.05, color='k')
         plt.draw()
         plt.pause(0.000000001)
 
