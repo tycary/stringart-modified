@@ -124,7 +124,6 @@ class StringArtGenerator:
 
             # choose max darkness path
             darkest_nail, darkest_path = self.choose_darkest_path(nail)
-
             # add chosen node to pattern
             pattern.append(self.nodes[darkest_nail])
 

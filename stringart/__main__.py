@@ -15,8 +15,8 @@ if __name__ == '__main__':
     generator.load_image(browseFiles())
     generator.preprocess()
     generator.set_nails(200)
-    generator.set_seed(42)
-    generator.set_iterations(5000)
+    generator.set_seed(0)
+    generator.set_iterations(100)
     pattern = generator.generate()
 
     lines_x = []
