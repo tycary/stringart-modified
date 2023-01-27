@@ -7,6 +7,7 @@ from stringart import StringArtGenerator
 from filehandling import browseFiles
 
 if __name__ == '__main__':
+    outfile = open('stringart/output/NailOutput.txt', 'w')
 
     profiler = cProfile.Profile()
     profiler.enable()
@@ -17,7 +18,7 @@ if __name__ == '__main__':
     generator.set_nails(200)
     generator.set_seed(0)
     generator.set_iterations(100)
-    pattern = generator.generate()
+    pattern = generator.generate(outfile)
 
     lines_x = []
     lines_y = []
@@ -48,9 +49,11 @@ if __name__ == '__main__':
         plt.draw()
         plt.pause(0.000000001)
 
-    plt.savefig('stringart/demo/Output.png',
+    plt.savefig('stringart/output/Output.png',
                 bbox_inches='tight', pad_inches=0)
 
     profiler.disable()
     stats = pstats.Stats(profiler).sort_stats('cumtime')
     stats.print_stats()
+
+    outfile.close()

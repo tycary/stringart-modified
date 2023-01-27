@@ -108,17 +108,19 @@ class StringArtGenerator:
         self.image = self.image.filter(ImageFilter.EDGE_ENHANCE_MORE)
         self.image = ImageEnhance.Contrast(self.image).enhance(1)
         # Viewing Postprocessed Image
-        self.image.save('postproc.jpeg', 'jpeg')
+        self.image.save('stringart/output/postprocessed.jpeg', 'jpeg')
         np_img = np.array(self.image)
         self.data = np.flipud(np_img).transpose()
 
-    def generate(self):
+    def generate(self, outputfile):
         self.calculate_paths()
         delta = 0.0
         pattern = []
         nail = self.seed
         datacopy = copy.deepcopy(self.data)
         for i in range(self.iterations):
+            # output nail to file
+            outputfile.write(str(nail) + ',')
             # calculate straight line to all other nodes and calculate
             # 'darkness' from start node
 
