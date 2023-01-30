@@ -10,9 +10,8 @@ String instructions;
 int instr, curPos, baudrate;
 
 
-void setup() {
-  baudrate = 115200; //Common rates: 9600, 19200, 38400, *115200*, 230400
-  Serial.begin(baudrate);
+void setup() { 
+  Serial.begin(115200); //Common rates: 9600, 19200, 38400, *115200*, 230400
   AFMS.begin();
   myMotor->setSpeed(200); //steps per second; Max is 200 (1 rps)
   instr = 0;

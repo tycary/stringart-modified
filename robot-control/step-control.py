@@ -17,7 +17,7 @@ ser.flush()
 infile = open('stringart/output/NailOutput.txt', 'r')
 commands = infile.readline()
 nail = commands.split(',')
-for i in range(50):
+for i in range(10):
     print(i)
     ser.write((nail[i]+"\n").encode('utf-8'))
     tm.sleep(1.1)
