@@ -9,6 +9,7 @@ Some more information will follow
 import math
 import copy
 import numpy as np
+import time as tm
 
 from PIL import Image, ImageOps, ImageFilter, ImageEnhance
 
@@ -118,10 +119,17 @@ class StringArtGenerator:
         pattern = []
         nail = self.seed
         datacopy = copy.deepcopy(self.data)
+        prevTime = int(tm.time())
         for i in range(self.iterations):
             # progress statement
             if (i % 100 == 0):
-                print("Current Progress: "+str(i/self.iterations * 100)+"%\n")
+                print("Current Progress: " +
+                      str(int(i/self.iterations * 100))+"%\n")
+                if (i != 0):
+                    print("Estimated Time Remaining: ", str(
+                        (int(tm.time()) - prevTime)*(self.iterations/i)) + "s\n")
+                prevTime = int(tm.time())
+
             # output nail to file
             outputfile.write(str(nail) + ',')
             # calculate straight line to all other nodes and calculate
