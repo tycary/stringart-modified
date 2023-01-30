@@ -1,7 +1,6 @@
 import time as tm
 import serial
-from tkinter import *
-from tkinter import filedialog
+
 
 # COM Settings
 comChannel = "com6"
