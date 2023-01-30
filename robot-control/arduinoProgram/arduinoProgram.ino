@@ -5,14 +5,17 @@ Adafruit_MotorShield AFMS = Adafruit_MotorShield(); //Creating motorshield objec
 //Stepper Motor Object
 Adafruit_StepperMotor *myMotor = AFMS.getStepper(200, 2);
 
+//Initiallizing Variables
 String instructions;
-int inst, curPos;
+int instr, curPos, baudrate;
+
 
 void setup() {
-  Serial.begin(115200);
+  baudrate = 115200; //Common rates: 9600, 19200, 38400, *115200*, 230400
+  Serial.begin(baudrate);
   AFMS.begin();
   myMotor->setSpeed(200); //steps per second; Max is 200 (1 rps)
-  inst = 0;
+  instr = 0;
 }
 
 void loop() {
@@ -20,25 +23,25 @@ void loop() {
     delay(1); //Pause to read
     while (Serial.available() > 0){
       instructions = Serial.readStringUntil('\n');
-      //Serial.println(instructions);
-      inst = instructions.toInt();
+
+      instr = instructions.toInt();
       
-      if (inst == 404){ //Exit
+      if (instr == 404){ //Exit
        break;
       }
-      else if (inst == 401){ //Pause
+      else if (instr == 401){ //Pause
        myMotor->release();
       }
-      else if (inst == 402){ //Home
+      else if (instr == 402){ //Home
         moveMotor(0, curPos);
       }
       else {
-      moveMotor(inst, curPos);
-      curPos = inst;
+      moveMotor(instr, curPos);
+      curPos = instr;
       }
     }
     
-    while (instructions.toInt() == 404){
+    while (instr == 404){
       delay(1);
     }
   }
@@ -53,5 +56,5 @@ void moveMotor(int target, int cur){
   else if (difference < 0){
     myMotor->step(abs(difference), BACKWARD, SINGLE);
   }
-  delay(250);
+  delay(10);
 }

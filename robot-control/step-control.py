@@ -1,12 +1,27 @@
 import time as tm
 import serial
+from tkinter import *
+from tkinter import filedialog
 
+# COM Settings
+comChannel = "com6"
 Baudrate = 115200
-ser = serial.Serial("com6", Baudrate, timeout=5)
+to = 5  # Timeout
+
+# COM initializing
+ser = serial.Serial(comChannel, Baudrate, timeout=to)
 tm.sleep(2)  # Wait for com
 print("Ready for printing to serial\n")
 ser.flush()
-while (msg == 0):
-    ser.write((input()+"\n").encode('utf-8'))
-    tm.sleep(1)
-    msg = 1
+
+# Main
+infile = open('stringart/output/NailOutput.txt', 'r')
+commands = infile.readline()
+nail = commands.split(',')
+for i in range(50):
+    print(i)
+    ser.write((nail[i]+"\n").encode('utf-8'))
+    tm.sleep(1.1)
+    ser.reset_output_buffer()
+
+infile.close()
