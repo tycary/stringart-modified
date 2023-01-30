@@ -17,7 +17,7 @@ if __name__ == '__main__':
     generator.preprocess()
     generator.set_nails(200)
     generator.set_seed(0)
-    generator.set_iterations(5000)
+    generator.set_iterations(4000)
     pattern = generator.generate(outfile)
 
     lines_x = []
