@@ -119,6 +119,9 @@ class StringArtGenerator:
         nail = self.seed
         datacopy = copy.deepcopy(self.data)
         for i in range(self.iterations):
+            # progress statement
+            if (i % 100 == 0):
+                print("Current Progress: "+str(i/self.iterations * 100)+"%\n")
             # output nail to file
             outputfile.write(str(nail) + ',')
             # calculate straight line to all other nodes and calculate

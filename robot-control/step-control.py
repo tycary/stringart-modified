@@ -11,7 +11,7 @@ to = 5  # Timeout
 ser = serial.Serial(comChannel, Baudrate, timeout=to)
 tm.sleep(2)  # Wait for com
 print("Ready for printing to serial\n")
-ser.flush()  # sploosh
+ser.flush()
 
 # Main
 infile = open('stringart/output/NailOutput.txt', 'r')
