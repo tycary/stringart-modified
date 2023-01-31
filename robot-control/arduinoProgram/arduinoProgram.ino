@@ -15,8 +15,8 @@ void setup() {
   Serial.begin(115200); //Common rates: 9600, 19200, 38400, *115200*, 230400
   AFMS.begin();
   //steps per second; Max is 200sps (1 rps)
-  myMotor1->setSpeed(200); 
-  myMotor2->setSpeed(200);
+  motor1->setSpeed(200); 
+  motor2->setSpeed(200);
   instr = 0;
 }
 
