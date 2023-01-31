@@ -18,7 +18,7 @@ if __name__ == '__main__':
     generator.preprocess()
     generator.set_nails(200)
     generator.set_seed(0)
-    generator.set_iterations(500)
+    generator.set_iterations(4000)
     pattern = generator.generate(outfile)
 
     lines_x = []
@@ -48,9 +48,9 @@ if __name__ == '__main__':
         plt.plot(lines_x[i:i+batchsize], lines_y[i:i+batchsize],
                  linewidth=0.05, color='k')
         plt.draw()
-        plt.pause(0.000000001)
+        plt.pause(0.0000000001)
 
-    plt.savefig('stringart/output/Output.png',
+    plt.savefig('stringart/output/Output.png', dpi=1000,
                 bbox_inches='tight', pad_inches=0)
 
     profiler.disable()

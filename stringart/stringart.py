@@ -124,10 +124,10 @@ class StringArtGenerator:
             # progress statement
             if (i % 100 == 0):
                 print("Current Progress: " +
-                      str(int(i/self.iterations * 100))+"%\n")
+                      str(int(i/self.iterations * 100))+"%")
                 if (i != 0):
                     print("Estimated Time Remaining: ", str(
-                        (int(tm.time()) - prevTime)*(self.iterations/i)) + "s\n")
+                        int((int(tm.time()) - prevTime)*(self.iterations-i)/100)) + "s\n")
                 prevTime = int(tm.time())
 
             # output nail to file
@@ -153,7 +153,7 @@ class StringArtGenerator:
 
             # continue from destination node as new start
             nail = darkest_nail
-
+        print("Generation Finished\n")
         self.residual = copy.deepcopy(self.data)
         self.data = datacopy
 
