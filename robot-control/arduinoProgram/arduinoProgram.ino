@@ -55,7 +55,10 @@ void loop() {
 //Moves stepper to target position
 void moveMotor(int target, int cur, Adafruit_StepperMotor *curMotor){
   int difference = target - cur;
-  if (difference > 0) {
+  if (difference > 100) {
+    curMotor->step(abs(difference-200), BACKWARD, SINGLE);
+  }
+  else if (difference > 0){
     curMotor->step(difference, FORWARD, SINGLE);
   }
   else if (difference < 0){
