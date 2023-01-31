@@ -2,6 +2,7 @@ import cProfile
 import pstats
 
 import matplotlib.pyplot as plt
+import time as tm
 
 from stringart import StringArtGenerator
 from filehandling import browseFiles
@@ -17,7 +18,7 @@ if __name__ == '__main__':
     generator.preprocess()
     generator.set_nails(200)
     generator.set_seed(0)
-    generator.set_iterations(4000)
+    generator.set_iterations(500)
     pattern = generator.generate(outfile)
 
     lines_x = []
@@ -54,6 +55,6 @@ if __name__ == '__main__':
 
     profiler.disable()
     stats = pstats.Stats(profiler).sort_stats('cumtime')
-    stats.print_stats()
+    # stats.print_stats()
 
     outfile.close()

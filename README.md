@@ -1,11 +1,10 @@
 # Fork Note
-This fork was created to further the usability of the algorithm for string art pictures.
+This fork was created to further the usability of the algorithm for creating personal string art or controlling a string art robot. 
 
 # string-art
 
 string-art is an algorithm to construct string-art pictures.
 
-![Mona Lisa stringart](stringart/demo/result_ml.png "Mona Lisa stringart")
 
 This project has been inspired by the magnificant works of [Petros
 Vrellis](http://artof01.com/vrellis/works/knit.html).
