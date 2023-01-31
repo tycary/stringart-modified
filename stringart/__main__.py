@@ -50,7 +50,7 @@ if __name__ == '__main__':
         plt.draw()
         plt.pause(0.0000000001)
 
-    plt.savefig('stringart/output/Output.png', dpi=1000,
+    plt.savefig('stringart/output/Output.png', dpi=500,
                 bbox_inches='tight', pad_inches=0)
 
     profiler.disable()
