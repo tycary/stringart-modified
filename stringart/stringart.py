@@ -167,6 +167,10 @@ class StringArtGenerator:
             rows = [i[0] for i in rowcol]
             cols = [i[1] for i in rowcol]
             darkness = float(np.sum(self.data[rows, cols]))
+            length = 1.0
+            # Normalizing for distance
+            if (len(rows) != 0):
+                length = math.dist((rows[0], cols[0]), (rows[-1], cols[-1]))
 
             if darkness > max_darkness:
                 darkest_path = np.zeros(np.shape(self.data))
