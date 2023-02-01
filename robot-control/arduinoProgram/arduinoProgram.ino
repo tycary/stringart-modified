@@ -3,8 +3,8 @@
 Adafruit_MotorShield AFMS = Adafruit_MotorShield(); // Creating motorshield object
 
 // Stepper Motor Object
-Adafruit_StepperMotor *motor1 = AFMS.getStepper(200, 1);
-Adafruit_StepperMotor *motor2 = AFMS.getStepper(200, 2);
+Adafruit_StepperMotor *motor1 = AFMS.getStepper(200, 2);
+Adafruit_StepperMotor *motor2 = AFMS.getStepper(200, 1);
 
 // General Variables
 String instructions;
@@ -55,16 +55,17 @@ void loop()
       }
       else if (instr == 402)
       { // Home
-        moveMotor(0, curPos, gearRatio);
+        curPos = moveMotor(0, curPos, gearRatio);
+        curPos = moveMotor(10, curPos, gearRatio);
+        curPos = moveMotor(0, curPos, gearRatio);
       }
+      else if (instr < 0){}
       else if (instr < 200)
       {
-        moveMotor(instr, curPos, gearRatio); // Move wheel to position
-        curPos = instr;
-        motor2->step(int(50 * gearRatio), BACKWARD, SINGLE); // Move threader down
-        moveMotor(instr + 1, curPos, gearRatio);
-        curPos = instr;
-        motor2->step(int(50 * gearRatio), FORWARD, SINGLE); // Move threader up
+        curPos = moveMotor(instr, curPos, gearRatio); // Move wheel to position
+        motor2->step(int(50), BACKWARD, DOUBLE); // Move threader down
+        curPos = moveMotor(instr + 1, curPos, gearRatio); // Move wheel to next nail
+        motor2->step(int(50), FORWARD, DOUBLE); // Move threader up
       }
     }
 
@@ -75,25 +76,26 @@ void loop()
   }
 }
 
-// Moves stepper to target position
-void moveMotor(int target, int cur, float ratio)
+// Moves stepper to target position and returns target
+int moveMotor(int target, int cur, float ratio)
 {
   int difference = target - cur;
   if (difference > 100)
   {
-    motor1->step(int((difference - 100) * ratio), BACKWARD, SINGLE);
+    motor1->step(int(abs(difference - 200) * ratio), BACKWARD, DOUBLE);
   }
   else if (difference < -100)
   {
-    motor1->step(int(abs(difference + 100) * ratio), FORWARD, SINGLE);
+    motor1->step(int((difference + 200) * ratio), FORWARD, DOUBLE);
   }
   else if (difference > 0)
   {
-    motor1->step(int(difference * ratio), FORWARD, SINGLE);
+    motor1->step(int(difference * ratio), FORWARD, DOUBLE);
   }
   else if (difference < 0)
   {
-    motor1->step(int(abs(difference) * ratio), BACKWARD, SINGLE);
+    motor1->step(int(abs(difference) * ratio), BACKWARD, DOUBLE);
   }
-  delay(10);
+  delay(5);
+  return target;
 }

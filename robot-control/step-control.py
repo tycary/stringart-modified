@@ -5,7 +5,7 @@ import serial
 gearRatio = 1
 
 # Time to pause for movements
-pauseRatio = 1
+pauseRatio = 0.5
 
 # COM Settings
 comChannel = "com6"
@@ -32,11 +32,11 @@ prevNail = 0
 for i in range(10):
     print(i)
     ser.write((nail[i]+"\n").encode('utf-8'))
-    tm.sleep(abs(prevNail-nail[i])*gearRatio +
+    tm.sleep(abs(prevNail-nail[i])/200*gearRatio +
              pauseRatio)  # Pauses for motor movement
     ser.reset_output_buffer()
     prevNail = nail[i]
 
 
-ser.write(("404\n").encode('utf-8'))  # Turn off Steppers
+ser.write(("401\n").encode('utf-8'))  # Turn off Steppers
 infile.close()

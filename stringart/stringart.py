@@ -152,7 +152,7 @@ class StringArtGenerator:
             delta = np.sum(self.data)
 
             # continue from destination node as new start
-            nail = darkest_nail
+            nail = darkest_nail + 1
         print("Generation Finished\n")
         self.residual = copy.deepcopy(self.data)
         self.data = datacopy
