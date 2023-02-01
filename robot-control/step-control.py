@@ -14,10 +14,12 @@ to = 5  # Timeout
 
 # COM initializing
 ser = serial.Serial(comChannel, Baudrate, timeout=to)
-tm.sleep(2)  # Wait for com
-print("Ready for printing to serial")
+tm.sleep(0.5)  # Wait for com
+ser.reset_input_buffer()
+ser.reset_output_buffer()
+tm.sleep(2)
 ser.flush()
-tm.sleep(1)
+tm.sleep(3)
 
 # Main
 infile = open('stringart/output/NailOutput.txt', 'r')
@@ -36,10 +38,14 @@ ser.reset_output_buffer()
 
 prevNail = 0
 # Send nails to Arduino
-for i in range(1000):
+for i in range(10):
     print("Iteration: " + str(i) + " | current nail: " + nail[i])
     ser.write((nail[i]+"\n").encode('utf-8'))
-    tm.sleep(1.2*gearRatio)
+    # tm.sleep(1.2*gearRatio)
+    msg = ser.read().decode('utf-8')
+    while msg.find("x") == -1:
+        msg = ser.read().decode('utf-8')
+    ser.reset_input_buffer()
     ser.reset_output_buffer()
     prevNail = int(nail[i])
 
