@@ -52,11 +52,14 @@ for i in range(30):
 
 print("\nPrint Complete!\n")
 tm.sleep(1)
+
+# Shutdown Sequence
 ser.write(("402\n").encode('utf-8'))  # Home Steppers
 tm.sleep(1)
 ser.write(("401\n").encode('utf-8'))  # Turn off Steppers
 tm.sleep(0.1)
 ser.reset_input_buffer()
 ser.reset_output_buffer()
-tm.sleep(0.1)
+tm.sleep(0.2)
+
 infile.close()
