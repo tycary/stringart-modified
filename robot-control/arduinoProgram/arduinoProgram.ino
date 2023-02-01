@@ -60,12 +60,12 @@ void loop()
         curPos = moveMotor(10, curPos, gearRatio);
         curPos = moveMotor(0, curPos, gearRatio);
       }
-      else if (instr < 200 && instr >=0)
+      else if (instr < 200 && instr >= 0)
       {
-        curPos = moveMotor(instr, curPos, gearRatio); // Move wheel to position
-        motor2->step(int(50), BACKWARD, DOUBLE); // Move threader down
+        curPos = moveMotor(instr, curPos, gearRatio);     // Move wheel to position
+        motor2->step(int(25), BACKWARD, DOUBLE);          // Move threader down
         curPos = moveMotor(instr + 1, curPos, gearRatio); // Move wheel to next nail
-        motor2->step(int(50), FORWARD, DOUBLE); // Move threader up
+        motor2->step(int(25), FORWARD, DOUBLE);           // Move threader up
         Serial.println("x");
       }
     }
