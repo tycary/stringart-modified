@@ -8,7 +8,7 @@ from stringart import StringArtGenerator
 from filehandling import browseFiles
 
 if __name__ == '__main__':
-    outfile = open('stringart/output/NormalizedNailOutput.txt', 'w')
+    outfile = open('stringart/output/licaPortrait/NailOutput.txt', 'w')
 
     profiler = cProfile.Profile()
     profiler.enable()
@@ -16,7 +16,7 @@ if __name__ == '__main__':
     generator = StringArtGenerator()
     generator.load_image(browseFiles())
     generator.preprocess()
-    generator.set_nails(200)
+    generator.set_nails(400)
     generator.set_seed(0)
     generator.set_iterations(4000)
     pattern = generator.generate(outfile)
@@ -50,7 +50,7 @@ if __name__ == '__main__':
         plt.draw()
         plt.pause(0.0000000001)
 
-    plt.savefig('stringart/output/NormalizedOutput.png', dpi=500,
+    plt.savefig('stringart/output/licaPortrait/Output.png', dpi=500,
                 bbox_inches='tight', pad_inches=0)
 
     profiler.disable()

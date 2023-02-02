@@ -109,11 +109,13 @@ class StringArtGenerator:
         self.image = self.image.filter(ImageFilter.EDGE_ENHANCE_MORE)
         self.image = ImageEnhance.Contrast(self.image).enhance(1)
         # Viewing Postprocessed Image
-        self.image.save('stringart/output/postprocessed.jpeg', 'jpeg')
+        self.image.save(
+            'stringart/output/licaPortrait/postprocessed.jpeg', 'jpeg')
         np_img = np.array(self.image)
         self.data = np.flipud(np_img).transpose()
 
     def generate(self, outputfile):
+        print("Generating...")
         self.calculate_paths()
         delta = 0.0
         pattern = []
@@ -169,9 +171,9 @@ class StringArtGenerator:
             darkness = float(np.sum(self.data[rows, cols]))
             length = 1.0
             # Normalizing for distance
-            if (len(rows) != 0):
-                length = math.dist((rows[0], cols[0]), (rows[-1], cols[-1]))
-            darkness = darkness/length
+            # if (len(rows) != 0):
+            #    length = math.dist((rows[0], cols[0]), (rows[-1], cols[-1]))
+            # darkness = darkness/length
             if darkness > max_darkness:
                 darkest_path = np.zeros(np.shape(self.data))
                 darkest_path[rows, cols] = 1.0
