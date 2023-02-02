@@ -171,7 +171,7 @@ class StringArtGenerator:
             # Normalizing for distance
             if (len(rows) != 0):
                 length = math.dist((rows[0], cols[0]), (rows[-1], cols[-1]))
-
+            darkness = darkness/length
             if darkness > max_darkness:
                 darkest_path = np.zeros(np.shape(self.data))
                 darkest_path[rows, cols] = 1.0
