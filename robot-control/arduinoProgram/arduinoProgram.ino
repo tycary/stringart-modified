@@ -57,8 +57,6 @@ void loop()
       else if (instr == 402)
       { // Home
         curPos = moveMotor(0, curPos, gearRatio);
-        curPos = moveMotor(10, curPos, gearRatio);
-        curPos = moveMotor(0, curPos, gearRatio);
       }
       else if (instr < 200 && instr >= 0)
       {

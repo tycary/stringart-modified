@@ -3,7 +3,7 @@ import serial
 
 
 # Set gear ratio
-gearRatio = 1
+gearRatio = 10
 
 # COM Settings
 comChannel = "com6"
@@ -15,7 +15,7 @@ ser = serial.Serial(comChannel, Baudrate, timeout=to)
 tm.sleep(0.5)  # Wait for com
 ser.reset_input_buffer()
 ser.reset_output_buffer()
-tm.sleep(0.5)
+tm.sleep(0.2)
 print("Communication Ready")
 ser.flush()
 tm.sleep(2)
@@ -23,39 +23,39 @@ tm.sleep(2)
 # Main
 infile = open('stringart/output/NailOutput.txt', 'r')
 commands = infile.readline()
-nail = commands.split(',')
+nails = commands.split(',')
 # Send gear ratio and home wheel
 ser.write((str(gearRatio)+"\n").encode('utf-8'))
 ser.reset_output_buffer()
 print("Gear Ratio Set")
-tm.sleep(1)
+tm.sleep(0.5)
 
 ser.write(("402\n").encode('utf-8'))
 print("Homing")
-tm.sleep(5)  # Wait time for Homing
+# Wait for Homing
+tm.sleep(0.5*gearRatio + 0.5)
 ser.reset_output_buffer()
+print("Homed")
+tm.sleep(0.1)
 
 prevNail = 0
 # Send nails to Arduino
 print("Printing\n")
-for i in range(30):
-    print("Iteration: " + str(i) + " | current nail: " + nail[i])
-    ser.write((nail[i]+"\n").encode('utf-8'))
-    # tm.sleep(1.2*gearRatio)
+for n in nails:
+    print("Iteration: " + str(n) + " | current nail: " + n)
+    ser.write((n+"\n").encode('utf-8'))
     msg = ser.read().decode('utf-8')
     while msg.find("x") == -1:
         msg = ser.read().decode('utf-8')
     ser.reset_input_buffer()
     ser.reset_output_buffer()
     tm.sleep(0.1)
-    prevNail = int(nail[i])
+    prevNail = int(n)
 
 print("\nPrint Complete!\n")
 tm.sleep(1)
 
 # Shutdown Sequence
-ser.write(("402\n").encode('utf-8'))  # Home Steppers
-tm.sleep(1)
 ser.write(("401\n").encode('utf-8'))  # Turn off Steppers
 tm.sleep(0.1)
 ser.reset_input_buffer()
