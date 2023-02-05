@@ -3,7 +3,7 @@ import serial
 
 
 # Set gear ratio
-gearRatio = 10
+gearRatio = 1
 
 # COM Settings
 comChannel = "com6"
@@ -40,17 +40,19 @@ tm.sleep(0.1)
 
 prevNail = 0
 # Send nails to Arduino
+curIt = 0
 print("Printing\n")
 for n in nails:
-    print("Iteration: " + str(n) + " | current nail: " + n)
+    print("Iteration: " + str(curIt) + " | Current nail: " + n)
     ser.write((n+"\n").encode('utf-8'))
     msg = ser.read().decode('utf-8')
     while msg.find("x") == -1:
         msg = ser.read().decode('utf-8')
     ser.reset_input_buffer()
     ser.reset_output_buffer()
-    tm.sleep(0.1)
+    tm.sleep(0.25)
     prevNail = int(n)
+    curIt += 1
 
 print("\nPrint Complete!\n")
 tm.sleep(1)

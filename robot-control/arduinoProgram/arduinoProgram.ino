@@ -8,7 +8,7 @@ Adafruit_StepperMotor *motor2 = AFMS.getStepper(200, 1);
 
 // General Variables
 String instructions;
-int instr, curPos, baudrate, initial, trueinst, nailos; // NailOffset
+int instr, curPos, baudrate, initial, trueinst, nailos; // NailOffset == boolean is-Odd
 float gearRatio;
 
 #define MAXNAIL 399
@@ -100,13 +100,13 @@ void loop()
 // Moves stepper to target position and returns target
 int moveMotor(int target, int cur, float ratio)
 {
-  if (target == MAXNAIL + 1)
+  if (target == 199 + 1)
   {
     target = 0;
   }
   if (target < 0)
   {
-    target = MAXNAIL;
+    target = 199;
   }
   int difference = target - cur;
   if (difference > 100)
