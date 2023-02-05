@@ -3,7 +3,7 @@ import serial
 
 
 # Set gear ratio
-gearRatio = 1
+gearRatio = 10
 
 # COM Settings
 comChannel = "com6"
@@ -30,6 +30,7 @@ ser.reset_output_buffer()
 print("Gear Ratio Set")
 tm.sleep(0.5)
 
+# Home Wheel
 ser.write(("402\n").encode('utf-8'))
 print("Homing")
 # Wait for Homing
