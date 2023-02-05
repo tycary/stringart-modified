@@ -8,8 +8,10 @@ Adafruit_StepperMotor *motor2 = AFMS.getStepper(200, 1);
 
 // General Variables
 String instructions;
-int instr, curPos, baudrate, initial;
+int instr, curPos, baudrate, initial, trueinst, nailos; // NailOffset
 float gearRatio;
+
+#define MAXNAIL 399
 
 void setup()
 {
@@ -21,6 +23,8 @@ void setup()
   instr = 0;
   gearRatio = 1;
   initial = 0;
+  trueinst = 0;
+  nailos = 0;
 
   while (initial == 0)
   {           // Get gear ratio
@@ -58,12 +62,30 @@ void loop()
       { // Home
         curPos = moveMotor(0, curPos, gearRatio);
       }
-      else if (instr < 200 && instr >= 0)
+      else if (instr <= MAXNAIL && instr >= 0)
       {
-        curPos = moveMotor(instr, curPos, gearRatio);     // Move wheel to position
-        motor2->step(int(25), BACKWARD, DOUBLE);          // Move threader down
-        curPos = moveMotor(instr + 1, curPos, gearRatio); // Move wheel to next nail
-        motor2->step(int(25), FORWARD, DOUBLE);           // Move threader up
+        if (instr % 2 == 0)
+        {
+          trueinst = instr / 2;
+          nailos = 0;
+        }
+        else
+        {
+          trueinst = (instr - 1) / 2;
+          nailos = 1;
+        }
+        curPos = moveMotor(trueinst, curPos, gearRatio); // Move wheel to position
+        motor2->step(int(25), BACKWARD, DOUBLE);         // Move threader down
+        if (nailos == 0)
+        {
+          curPos = moveMotor(trueinst - 1, curPos, gearRatio); // Move wheel to next nail
+        }
+        else
+        {
+          curPos = moveMotor(trueinst + 1, curPos, gearRatio); // Move wheel to next nail
+        }
+
+        motor2->step(int(25), FORWARD, DOUBLE); // Move threader up
         Serial.println("x");
       }
     }
@@ -78,6 +100,14 @@ void loop()
 // Moves stepper to target position and returns target
 int moveMotor(int target, int cur, float ratio)
 {
+  if (target == MAXNAIL + 1)
+  {
+    target = 0;
+  }
+  if (target < 0)
+  {
+    target = MAXNAIL;
+  }
   int difference = target - cur;
   if (difference > 100)
   {

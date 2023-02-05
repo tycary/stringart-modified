@@ -16,9 +16,9 @@ if __name__ == '__main__':
     generator = StringArtGenerator()
     generator.load_image(browseFiles())
     generator.preprocess()
-    generator.set_nails(200)
+    generator.set_nails(400)
     generator.set_seed(0)
-    generator.set_iterations(4000)
+    generator.set_iterations(5000)
     pattern = generator.generate(outfile)
 
     lines_x = []
