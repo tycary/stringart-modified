@@ -8,7 +8,7 @@ gearRatio = 10
 # COM Settings
 comChannel = "com6"
 Baudrate = 115200
-to = 5  # Timeout
+to = 10  # Timeout
 
 # COM initializing
 ser = serial.Serial(comChannel, Baudrate, timeout=to)
@@ -44,14 +44,23 @@ prevNail = 0
 curIt = 0
 print("Printing\n")
 for n in nails:
+    prevTime = tm.time()
     print("Iteration: " + str(curIt) + " | Current nail: " + n)
     ser.write((n+"\n").encode('utf-8'))
     msg = ser.read().decode('utf-8')
     while msg.find("x") == -1:
         msg = ser.read().decode('utf-8')
+        # Resend Code if arduino takes too long
+        if (prevTime > (tm.time() + abs(n - prevNail)*gearRatio + 1)):
+            print("Nail failed...Execution Restarting")
+            ser.reset_input_buffer()
+            ser.reset_output_buffer()
+            tm.sleep(0.5)
+            ser.write((n+"\n").encode('utf-8'))
+            prevTime = tm.time()
     ser.reset_input_buffer()
     ser.reset_output_buffer()
-    tm.sleep(0.25)
+    tm.sleep(0.20)
     prevNail = int(n)
     curIt += 1
 
@@ -65,4 +74,5 @@ ser.reset_input_buffer()
 ser.reset_output_buffer()
 tm.sleep(0.2)
 
+ser.close()
 infile.close()
