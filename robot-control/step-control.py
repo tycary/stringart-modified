@@ -51,7 +51,7 @@ for n in nails:
     while msg.find("x") == -1:
         msg = ser.read().decode('utf-8')
         # Resend Code if arduino takes too long
-        if (prevTime > (tm.time() + abs(n - prevNail)*gearRatio + 1)):
+        if (tm.time() > (prevTime + abs(n - prevNail)*gearRatio + 1)):
             print("Nail failed...Execution Restarting")
             ser.reset_input_buffer()
             ser.reset_output_buffer()
