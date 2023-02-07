@@ -3,10 +3,10 @@ import serial
 
 
 # Set gear ratio
-gearRatio = 10
+gearRatio = 1.0
 
 # COM Settings
-comChannel = "com6"
+comChannel = "com3"
 Baudrate = 115200
 to = 10  # Timeout
 
@@ -51,16 +51,17 @@ for n in nails:
     while msg.find("x") == -1:
         msg = ser.read().decode('utf-8')
         # Resend Code if arduino takes too long
-        if (tm.time() > (prevTime + abs(n - prevNail)*gearRatio + 1)):
+        if (tm.time() > (prevTime + abs(int(n) - prevNail)*gearRatio/400.0 + 1)):
             print("Nail failed...Execution Restarting")
             ser.reset_input_buffer()
             ser.reset_output_buffer()
-            tm.sleep(0.5)
+            ser.flush()
+            tm.sleep(3)
             ser.write((n+"\n").encode('utf-8'))
             prevTime = tm.time()
     ser.reset_input_buffer()
     ser.reset_output_buffer()
-    tm.sleep(0.20)
+    tm.sleep(0.6)
     prevNail = int(n)
     curIt += 1
 
