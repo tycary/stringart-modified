@@ -7,7 +7,7 @@ gearRatio = 1.0
 
 # COM Settings
 comChannel = "com3"
-Baudrate = 115200
+Baudrate = 19200
 to = 10  # Timeout
 
 # COM initializing
@@ -61,7 +61,7 @@ for n in nails:
             prevTime = tm.time()
     ser.reset_input_buffer()
     ser.reset_output_buffer()
-    tm.sleep(0.6)
+    tm.sleep(0.3)
     prevNail = int(n)
     curIt += 1
 
