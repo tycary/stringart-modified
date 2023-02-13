@@ -15,7 +15,7 @@ float gearRatio;
 
 void setup()
 {
-  Serial.begin(19200); // Common rates: 9600, 19200, 38400, *115200*, 230400
+  Serial.begin(9600); // Common rates: 9600, 19200, 38400, *115200*, 230400
   AFMS.begin();
   // steps per second; Max is 200sps (1 rps)
   motor1->setSpeed(200);
@@ -87,6 +87,7 @@ void loop()
 
         motor2->step(int(25), FORWARD, DOUBLE); // Move threader up
         Serial.println("x");
+        delay(100);
       }
     }
 
