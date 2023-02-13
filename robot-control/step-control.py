@@ -59,9 +59,9 @@ for n in nails:
             tm.sleep(3)
             ser.write((n+"\n").encode('utf-8'))
             prevTime = tm.time()
-    ser.reset_input_buffer()
-    ser.reset_output_buffer()
-    tm.sleep(0.3)
+    # ser.reset_input_buffer()
+    # ser.reset_output_buffer()
+    # tm.sleep(0.3)
     prevNail = int(n)
     curIt += 1
 
