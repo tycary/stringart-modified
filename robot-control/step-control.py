@@ -7,7 +7,7 @@ gearRatio = 1.0
 
 # COM Settings
 comChannel = "com3"
-Baudrate = 9600
+Baudrate = 19200
 to = 10  # Timeout
 
 # COM initializing

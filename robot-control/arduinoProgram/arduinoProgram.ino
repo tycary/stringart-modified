@@ -15,7 +15,7 @@ float gearRatio;
 
 void setup()
 {
-  Serial.begin(9600); // Common rates: 9600, 19200, 38400, *115200*, 230400
+  Serial.begin(19200); // Common rates: 9600, 19200, 38400, *115200*, 230400
   AFMS.begin();
   // steps per second; Max is 200sps (1 rps)
   motor1->setSpeed(200);
@@ -62,6 +62,9 @@ void loop()
       { // Home
         curPos = moveMotor(0, curPos, gearRatio);
       }
+      else if (instr == 403){
+        motor1->step(200 * gearRatio, FORWARD, DOUBLE);
+      }
       else if (instr <= MAXNAIL && instr >= 0)
       {
         if (instr % 2 == 0)
@@ -75,7 +78,8 @@ void loop()
           nailos = 1;
         }
         curPos = moveMotor(trueinst, curPos, gearRatio); // Move wheel to position
-        motor2->step(int(25), BACKWARD, DOUBLE);         // Move threader down
+        motor2->step(int(5), BACKWARD, DOUBLE);         // Move threader down
+        delay(500); //testing delays
         if (nailos == 0)
         {
           curPos = moveMotor(trueinst - 1, curPos, gearRatio); // Move wheel to next nail
@@ -84,8 +88,8 @@ void loop()
         {
           curPos = moveMotor(trueinst + 1, curPos, gearRatio); // Move wheel to next nail
         }
-
-        motor2->step(int(25), FORWARD, DOUBLE); // Move threader up
+        delay(500); //testing delays
+        motor2->step(int(5), FORWARD, DOUBLE); // Move threader up
         Serial.println("x");
         delay(100);
       }
@@ -112,19 +116,19 @@ int moveMotor(int target, int cur, float ratio)
   int difference = target - cur;
   if (difference > 100)
   {
-    motor1->step(int(abs(difference - 200) * ratio), BACKWARD, DOUBLE);
+    motor1->step(int(abs(difference - 200) * ratio), FORWARD, DOUBLE);
   }
   else if (difference < -100)
   {
-    motor1->step(int((difference + 200) * ratio), FORWARD, DOUBLE);
+    motor1->step(int((difference + 200) * ratio), BACKWARD, DOUBLE);
   }
   else if (difference > 0)
   {
-    motor1->step(int(difference * ratio), FORWARD, DOUBLE);
+    motor1->step(int(difference * ratio), BACKWARD, DOUBLE);
   }
   else if (difference < 0)
   {
-    motor1->step(int(abs(difference) * ratio), BACKWARD, DOUBLE);
+    motor1->step(int(abs(difference) * ratio), FORWARD, DOUBLE);
   }
   delay(5);
   return target;
