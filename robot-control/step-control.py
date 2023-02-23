@@ -64,6 +64,9 @@ for n in nails:
     tm.sleep(0.1)
     prevNail = int(n)
     curIt += 1
+    # Testing break
+    if curIt == 50:
+        break
 
 print("\nPrint Complete!\n")
 tm.sleep(1)
