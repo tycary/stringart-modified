@@ -63,7 +63,7 @@ void loop()
         curPos = moveMotor(0, curPos, gearRatio);
       }
       else if (instr == 403){
-        motor1->step(200 * gearRatio, FORWARD, DOUBLE);
+        motor1->step(200 * gearRatio, BACKWARD, DOUBLE);
       }
       else if (instr <= MAXNAIL && instr >= 0)
       {

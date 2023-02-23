@@ -3,10 +3,10 @@ import serial
 
 
 # Set gear ratio
-gearRatio = 1.0
+gearRatio = 10.0
 
 # COM Settings
-comChannel = "com3"
+comChannel = "com4"
 Baudrate = 19200
 to = 10  # Timeout
 
