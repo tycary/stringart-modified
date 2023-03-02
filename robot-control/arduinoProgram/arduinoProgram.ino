@@ -65,6 +65,9 @@ void loop()
       else if (instr == 403){
         motor1->step(200 * gearRatio, BACKWARD, DOUBLE);
       }
+      else if (instr == 405){
+        motor1->step(200 * gearRatio, FORWARD, DOUBLE);
+      }
       else if (instr <= MAXNAIL && instr >= 0)
       {
         if (instr % 2 == 0)
