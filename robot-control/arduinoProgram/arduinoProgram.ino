@@ -20,8 +20,8 @@ void setup()
   Serial.begin(19200); // Common rates: 9600, 19200, 38400, *115200*, 230400
   AFMS.begin();
   // steps per second; Max is 200sps (1 rps)
-  motor1->setSpeed(100);
-  motor2->setSpeed(10);
+  motor1->setSpeed(200);
+  motor2->setSpeed(100);
   instr = 0;
   gearRatio = 1;
   initial = 0;
@@ -79,11 +79,11 @@ void loop()
           if (i%2 == 0)
           {
             motor2->step(10,BACKWARD, DOUBLE);
-            motor1->step(2*gearRatio, CW, DOUBLE);
+            motor1->step(gearRatio, CW, DOUBLE);
             motor2->step(10, FORWARD, DOUBLE);
           }
           //delay(50);
-          motor1->step(44*gearRatio, CW, DOUBLE);
+          motor1->step(22*gearRatio, CW, DOUBLE);
           delay(50);
         }
       }
@@ -96,22 +96,22 @@ void loop()
         }
         else
         {
-          trueinst = (instr - 1) / 2;
+          trueinst = (instr + 1) / 2;
           nailos = 1;
         }
         curPos = moveMotor(trueinst, curPos, gearRatio); // Move wheel to position
-        motor2->step(9, BACKWARD, DOUBLE);         // Move threader down
-        delay(200); //testing delays
+        motor2->step(11, BACKWARD, DOUBLE);         // Move threader down
+        delay(100); //testing delays
         if (nailos == 0)
-        {
-          curPos = moveMotor(trueinst - 1, curPos, gearRatio); // Move wheel to next nail
-        }
-        else
         {
           curPos = moveMotor(trueinst + 1, curPos, gearRatio); // Move wheel to next nail
         }
-        delay(200); //testing delays
-        motor2->step(9, FORWARD, DOUBLE); // Move threader up
+        else
+        {
+          curPos = moveMotor(trueinst - 1, curPos, gearRatio); // Move wheel to next nail
+        }
+        delay(100); //testing delays
+        motor2->step(11, FORWARD, DOUBLE); // Move threader up
         Serial.println("x");
       }
     }
