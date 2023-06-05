@@ -42,6 +42,7 @@ tm.sleep(0.1)
 prevNail = 0
 # Send nails to Arduino
 curIt = 0
+maxFailure = 0
 print("Printing\n")
 for n in nails:
     prevTime = tm.time()
@@ -59,6 +60,10 @@ for n in nails:
             tm.sleep(3)
             ser.write((n+"\n").encode('utf-8'))
             prevTime = tm.time()
+            maxFailure += 1
+        # Limit number of retries
+        if maxFailure > 5:
+            break
     # ser.reset_input_buffer()
     # ser.reset_output_buffer()
     tm.sleep(0.3)
