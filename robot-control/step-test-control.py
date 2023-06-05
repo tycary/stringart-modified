@@ -7,7 +7,7 @@ gearRatio = 10.0
 
 # COM Settings
 comChannel = "com4"
-Baudrate = 19200
+Baudrate = 115200
 to = 10  # Timeout
 
 # COM initializing
@@ -65,13 +65,14 @@ for n in nails:
     prevNail = int(n)
     curIt += 1
     # Testing break
-    if curIt == 50:
+    if curIt == 5500:
         break
 
 print("\nPrint Complete!\n")
 tm.sleep(1)
 
 # Shutdown Sequence
+ser.write(("402\n").encode('utf-8'))  # Home Steppers
 ser.write(("401\n").encode('utf-8'))  # Turn off Steppers
 tm.sleep(0.1)
 ser.reset_input_buffer()
