@@ -7,5 +7,3 @@
 - `pillow` >= 8.3.2
 
 - `scipy` == 1.7.1
-
-- `pyserial` == 3.5
