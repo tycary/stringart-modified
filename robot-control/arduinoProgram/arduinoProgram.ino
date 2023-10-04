@@ -67,14 +67,17 @@ void loop()
       { // Home
         curPos = 0;
         motor1.moveTo(0);
+        motor1.runToPosition();
       }
       else if (instr == 403)
       { // Backward 360
         motor1.moveTo(0);
+        motor1.runToPosition();
       }
       else if (instr == 405)
       { // Forward 360
         motor1.moveTo(200 * gearRatio);
+        motor1.runToPosition();
       }
       else if (instr == 406)
       { // Test Pattern
@@ -93,20 +96,25 @@ void loop()
         }
         curPos = calcTarget(trueinst, curPos, gearRatio); // Move wheel to position
         motor1.moveTo(curPos * gearRatio);
+        motor1.runToPosition();
         motor2.moveTo(11); // Move threader down
-        delay(100);        // testing delays
+        motor2.runToPosition();
+        delay(100); // testing delays
         if (nailos == 0)
         {
           curPos = calcTarget(trueinst + 1, curPos, gearRatio); // Move wheel to next nail
           motor1.moveTo(curPos * gearRatio);
+          motor1.runToPosition();
         }
         else
         {
           curPos = calcTarget(trueinst - 1, curPos, gearRatio); // Move wheel to next nail
           motor1.moveTo(curPos * gearRatio);
+          motor1.runToPosition();
         }
         delay(100);       // testing delays
         motor2.moveTo(0); // Move threader up
+        motor2.runToPosition();
         Serial.println("x");
       }
     }
