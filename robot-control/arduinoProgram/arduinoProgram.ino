@@ -22,7 +22,6 @@ float gearRatio;
 void setup()
 {
   Serial.begin(115200); // Common rates: 9600, 19200, 38400, *115200*, 230400
-  AFMS.begin();
   // steps per second; Max is 500sps (2.5 rps)
   motor1.setSpeed(500);
   motor2.setSpeed(6);
