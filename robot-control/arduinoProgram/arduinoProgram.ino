@@ -16,8 +16,8 @@ int instr, curPos, baudrate, initial, trueinst, nailos; // NailOffset == boolean
 float gearRatio;
 
 #define MAXNAIL 399 // Change for num of nodes * 2 - 1
-#define CW BACKWARD
-#define CCW FORWARD
+#define CW -1
+#define CCW 1
 
 void setup()
 {
@@ -71,12 +71,12 @@ void loop()
       }
       else if (instr == 403)
       { // Backward 360
-        motor1.moveTo(0);
+        motor1.move(200 * gearRatio * CCW);
         motor1.runToPosition();
       }
       else if (instr == 405)
       { // Forward 360
-        motor1.moveTo(200 * gearRatio);
+        motor1.move(200 * gearRatio * CW);
         motor1.runToPosition();
       }
       else if (instr == 406)
@@ -94,23 +94,17 @@ void loop()
           trueinst = (instr + 1) / 2;
           nailos = 1;
         }
-        curPos = calcTarget(trueinst, curPos, gearRatio); // Move wheel to position
-        motor1.moveTo(curPos * gearRatio);
-        motor1.runToPosition();
-        motor2.moveTo(11); // Move threader down
+        curPos = moveMotor(trueinst, curPos, gearRatio); // Move wheel to position
+        motor2.moveTo(11);                               // Move threader down
         motor2.runToPosition();
         delay(100); // testing delays
         if (nailos == 0)
         {
-          curPos = calcTarget(trueinst + 1, curPos, gearRatio); // Move wheel to next nail
-          motor1.moveTo(curPos * gearRatio);
-          motor1.runToPosition();
+          curPos = moveMotor(trueinst + 1, curPos, gearRatio); // Move wheel to next nail
         }
         else
         {
-          curPos = calcTarget(trueinst - 1, curPos, gearRatio); // Move wheel to next nail
-          motor1.moveTo(curPos * gearRatio);
-          motor1.runToPosition();
+          curPos = moveMotor(trueinst - 1, curPos, gearRatio); // Move wheel to next nail
         }
         delay(100);       // testing delays
         motor2.moveTo(0); // Move threader up
@@ -127,7 +121,7 @@ void loop()
 }
 
 // Moves stepper to target position and returns target
-int calcTarget(int target, int cur, float ratio)
+int moveMotor(int target, int cur, float ratio)
 {
   if (target == 199 + 1)
   {
@@ -137,5 +131,27 @@ int calcTarget(int target, int cur, float ratio)
   {
     target = 199;
   }
+  int difference = target - cur;
+  if (difference > 100)
+  {
+    motor1.move(int(abs(difference - 200) * ratio * CW));
+    motor1.runToPosition();
+  }
+  else if (difference < -100)
+  {
+    motor1.move(int((difference + 200) * ratio * CCW));
+    motor1.runToPosition();
+  }
+  else if (difference > 0)
+  {
+    motor1.move(int(difference * ratio * CCW));
+    motor1.runToPosition();
+  }
+  else if (difference < 0)
+  {
+    motor1.move(int(difference * ratio * CW));
+    motor1.runToPosition();
+  }
+  delay(5);
   return target;
 }
