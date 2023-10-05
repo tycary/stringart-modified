@@ -23,8 +23,8 @@ void setup()
 {
   Serial.begin(115200); // Common rates: 9600, 19200, 38400, *115200*, 230400
   // steps per second; Max is 500sps (2.5 rps)
-  motor1.setSpeed(500);
-  motor2.setSpeed(6);
+  motor1.setMaxSpeed(500);
+  motor2.setMaxSpeed(6);
   motor1.setAcceleration(250);
   motor2.setAcceleration(100);
   instr = 0;
