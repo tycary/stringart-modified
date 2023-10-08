@@ -9,7 +9,7 @@
 #define motor1MicroStep 4
 #define motor2MicroStep 4
 #define MAXSPEED 5.5 // rps (MAX = 5.5)
-#define MAXACCEL 20 //rpss
+#define MAXACCEL 20  // rpss
 
 #define MAXNAIL 399 // Change for num of nodes * 2 - 1
 #define CW 1
@@ -27,11 +27,11 @@ float gearRatio;
 void setup()
 {
   Serial.begin(115200); // Common rates: 9600, 19200, 38400, *115200*, 230400
-  motor1.setMaxSpeed(MAXSPEED*motor1MicroStep*SPR);
-  motor2.setMaxSpeed(6*motor2MicroStep*SPR);
-  motor1.setAcceleration(MAXACCEL*motor1MicroStep*SPR);
-  motor2.setAcceleration(20*motor2MicroStep*SPR);
-  motor2.move(5*motor2MicroStep);
+  motor1.setMaxSpeed(MAXSPEED * motor1MicroStep * SPR);
+  motor2.setMaxSpeed(6 * motor2MicroStep * SPR);
+  motor1.setAcceleration(MAXACCEL * motor1MicroStep * SPR);
+  motor2.setAcceleration(20 * motor2MicroStep * SPR);
+  motor2.move(5 * motor2MicroStep);
   motor2.runToPosition();
   instr = 0;
   gearRatio = 1;
@@ -50,7 +50,7 @@ void setup()
       initial = 1;
     }
   }
-  gearRatio = gearRatio*motor1MicroStep;
+  gearRatio = gearRatio * motor1MicroStep;
 }
 
 void loop()
@@ -87,9 +87,30 @@ void loop()
         motor1.runToPosition();
       }
       else if (instr == 406)
-      { 
-        motor1.move(2000 * gearRatio * CCW);
+      { // 10 rotations
+        motor1.move(2000 * gearRatio * CW);
         motor1.runToPosition();
+      }
+      else if (instr == 407)
+      {
+        for (int i = 0; 0 < 20; ++i) // 20 rotations in 1 rotation increments
+        {
+          motor1.move(200 * gearRatio * CW);
+          motor1.runToPosition();
+        }
+      }
+      else if (instr == 408)
+      {
+        for (int i = 0; 0 < 20; ++i) // 20 rotations in 1 rotation increments
+        {
+          motor1.move(200 * gearRatio * CW);
+          motor1.runToPosition();
+        }
+        for (int i = 0; 0 < 20; ++i) // 20 backwards rotations in 1 rotation increments
+        {
+          motor1.move(200 * gearRatio * CCW);
+          motor1.runToPosition();
+        }
       }
       else if (instr <= MAXNAIL && instr >= 0)
       {
@@ -104,7 +125,7 @@ void loop()
           nailos = 1;
         }
         curPos = moveMotor(trueinst, curPos, gearRatio); // Move wheel to position
-        motor2.moveTo(11*motor2MicroStep);                               // Move threader down
+        motor2.moveTo(11 * motor2MicroStep);             // Move threader down
         motor2.runToPosition();
         delay(100); // testing delays
         if (nailos == 0)
