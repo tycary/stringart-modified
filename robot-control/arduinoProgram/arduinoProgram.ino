@@ -5,6 +5,15 @@
 #define motor2dirPin 4
 #define motor2stepPin 5
 #define motorInterfaceType 1
+#define SPR 200 // Num of steps per revolution
+#define motor1MicroStep 4
+#define motor2MicroStep 4
+#define MAXSPEED 5.5 // rps (MAX = 5.5)
+#define MAXACCEL 20 //rpss
+
+#define MAXNAIL 399 // Change for num of nodes * 2 - 1
+#define CW 1
+#define CCW -1
 
 // Stepper Motor Objects
 AccelStepper motor1 = AccelStepper(motorInterfaceType, motor1stepPin, motor1dirPin);
@@ -15,18 +24,15 @@ String instructions;
 int instr, curPos, baudrate, initial, trueinst, nailos; // NailOffset == boolean is-Odd
 float gearRatio;
 
-#define MAXNAIL 399 // Change for num of nodes * 2 - 1
-#define CW -1
-#define CCW 1
-
 void setup()
 {
   Serial.begin(115200); // Common rates: 9600, 19200, 38400, *115200*, 230400
-  // steps per second; Max is 500sps (2.5 rps)
-  motor1.setMaxSpeed(500);
-  motor2.setMaxSpeed(6);
-  motor1.setAcceleration(250);
-  motor2.setAcceleration(100);
+  motor1.setMaxSpeed(MAXSPEED*motor1MicroStep*SPR);
+  motor2.setMaxSpeed(6*motor2MicroStep*SPR);
+  motor1.setAcceleration(MAXACCEL*motor1MicroStep*SPR);
+  motor2.setAcceleration(20*motor2MicroStep*SPR);
+  motor2.move(5*motor2MicroStep);
+  motor2.runToPosition();
   instr = 0;
   gearRatio = 1;
   initial = 0;
@@ -44,6 +50,7 @@ void setup()
       initial = 1;
     }
   }
+  gearRatio = gearRatio*motor1MicroStep;
 }
 
 void loop()
@@ -80,7 +87,9 @@ void loop()
         motor1.runToPosition();
       }
       else if (instr == 406)
-      { // Test Pattern
+      { 
+        motor1.move(2000 * gearRatio * CCW);
+        motor1.runToPosition();
       }
       else if (instr <= MAXNAIL && instr >= 0)
       {
@@ -95,7 +104,7 @@ void loop()
           nailos = 1;
         }
         curPos = moveMotor(trueinst, curPos, gearRatio); // Move wheel to position
-        motor2.moveTo(11);                               // Move threader down
+        motor2.moveTo(11*motor2MicroStep);                               // Move threader down
         motor2.runToPosition();
         delay(100); // testing delays
         if (nailos == 0)
@@ -134,22 +143,22 @@ int moveMotor(int target, int cur, float ratio)
   int difference = target - cur;
   if (difference > 100)
   {
-    motor1.move(int(abs(difference - 200) * ratio * CW));
+    motor1.move(int(abs(difference - 200) * ratio * CCW));
     motor1.runToPosition();
   }
   else if (difference < -100)
   {
-    motor1.move(int((difference + 200) * ratio * CCW));
+    motor1.move(int((difference + 200) * ratio * CW));
     motor1.runToPosition();
   }
   else if (difference > 0)
   {
-    motor1.move(int(difference * ratio * CCW));
+    motor1.move(int(difference * ratio * CW));
     motor1.runToPosition();
   }
   else if (difference < 0)
   {
-    motor1.move(int(difference * ratio * CW));
+    motor1.move(int(abs(difference) * ratio * CCW));
     motor1.runToPosition();
   }
   delay(5);
