@@ -1,26 +1,45 @@
-#include <Adafruit_MotorShield.h>
+#include <AccelStepper.h>
 
-Adafruit_MotorShield AFMS = Adafruit_MotorShield(); // Creating motorshield object
+#define motor1dirPin 2
+#define motor1stepPin 3
+#define motor2dirPin 4
+#define motor2stepPin 5
+#define motorInterfaceType 1
+#define SPR 200 // Num of steps per revolution
+#define motor1MicroStep 1
+#define motor2MicroStep 4
+#define MAXSPEED 0.1 // rps (MAX = 5.5)
+#define MAXACCEL 5  // rpss (norm = 20)
 
-// Stepper Motor Object
-Adafruit_StepperMotor *motor1 = AFMS.getStepper(200, 2);
-Adafruit_StepperMotor *motor2 = AFMS.getStepper(200, 1);
+#define MAXNODE 199 // Change for num of nodes - 1
+#define MAXNAIL 399 // Change for num of nodes * 2 - 1
+#define CW 1
+#define CCW -1
+
+// Stepper Motor Objects
+AccelStepper motor1 = AccelStepper(motorInterfaceType, motor1stepPin, motor1dirPin);
+AccelStepper motor2 = AccelStepper(motorInterfaceType, motor2stepPin, motor2dirPin);
 
 // General Variables
 String instructions;
-int instr, curPos, baudrate, initial;
+int instr, curPos, baudrate, initial, trueinst, nailos; // NailOffset == boolean is-Odd
 float gearRatio;
 
 void setup()
 {
   Serial.begin(115200); // Common rates: 9600, 19200, 38400, *115200*, 230400
-  AFMS.begin();
-  // steps per second; Max is 200sps (1 rps)
-  motor1->setSpeed(200);
-  motor2->setSpeed(200);
+  motor1.setMaxSpeed(MAXSPEED * motor1MicroStep * SPR);
+  motor2.setMaxSpeed(0.1 * motor2MicroStep * SPR);
+  motor1.setAcceleration(MAXACCEL * motor1MicroStep * SPR);
+  motor2.setAcceleration(20 * motor2MicroStep * SPR);
+  motor2.move(-8 * motor2MicroStep);
+  motor2.runToPosition();
+  
   instr = 0;
   gearRatio = 1;
   initial = 0;
+  trueinst = 0;
+  nailos = 0;
 
   while (initial == 0)
   {           // Get gear ratio
@@ -33,6 +52,7 @@ void setup()
       initial = 1;
     }
   }
+  gearRatio = gearRatio * motor1MicroStep;
 }
 
 void loop()
@@ -51,21 +71,89 @@ void loop()
       }
       else if (instr == 401)
       { // Pause
-        motor1->release();
-        motor2->release();
       }
       else if (instr == 402)
       { // Home
-        curPos = moveMotor(0, curPos, gearRatio);
-        curPos = moveMotor(10, curPos, gearRatio);
-        curPos = moveMotor(0, curPos, gearRatio);
+        curPos = 0;
+        motor1.moveTo(0);
+        motor1.runToPosition();
       }
-      else if (instr < 200 && instr >= 0)
+      else if (instr == 403)
+      { // Backward 360
+        motor1.move(200 * gearRatio * CCW);
+        motor1.runToPosition();
+      }
+      else if (instr == 1111)
+      { // Forward 1 step
+        motor1.move(1 * gearRatio * CW);
+        motor1.runToPosition();
+      }
+      else if (instr == 2222)
+      { // Backward 1 step
+        motor1.move(1 * gearRatio * CCW);
+        motor1.runToPosition();
+      }
+      else if (instr == 405)
+      { // Forward 360
+        motor1.move(200 * gearRatio * CW);
+        motor1.runToPosition();
+      }
+      else if (instr == 406)
+      { // 10 rotations
+        motor1.move(2000 * gearRatio * CW);
+        motor1.runToPosition();
+      }
+      else if (instr == 407)
       {
-        curPos = moveMotor(instr, curPos, gearRatio);     // Move wheel to position
-        motor2->step(int(25), BACKWARD, DOUBLE);          // Move threader down
-        curPos = moveMotor(instr + 1, curPos, gearRatio); // Move wheel to next nail
-        motor2->step(int(25), FORWARD, DOUBLE);           // Move threader up
+        for (int i = 0; i < 20; ++i) // 20 rotations in 1 rotation increments
+        {
+          motor1.move(200 * gearRatio * CW);
+          motor1.runToPosition();
+        }
+      }
+      else if (instr == 408)
+      {
+        int i = 0;
+        for (i = 0; i < 7; ++i) // 20 rotations in 1 rotation increments
+        {
+          motor1.move(200 * gearRatio * CW);
+          motor1.runToPosition();
+          delay(150);
+        }
+        for (i = 0; i < 7; ++i) // 20 backwards rotations in 1 rotation increments
+        {
+          motor1.move(200 * gearRatio * CCW);
+          motor1.runToPosition();
+          delay(150);
+        }
+      }
+      else if (instr <= MAXNAIL && instr >= 0)
+      {
+        if (instr % 2 == 0)
+        {
+          trueinst = instr / 2;
+          nailos = 0;
+        }
+        else
+        {
+          trueinst = (instr - 1) / 2;
+          nailos = 1;
+        }
+        curPos = moveMotor(trueinst, curPos, gearRatio); // Move wheel to position
+        motor2.moveTo(8 * motor2MicroStep);       // Move threader down
+        motor2.runToPosition();
+        delay(100); // testing delays
+        if (nailos == 0)
+        {
+          curPos = moveMotor(trueinst - 1, curPos, gearRatio); // Move wheel to next nail
+        }
+        else
+        {
+          curPos = moveMotor(trueinst + 1, curPos, gearRatio); // Move wheel to next nail
+        }
+        delay(100);       // testing delays
+        motor2.moveTo(0); // Move threader up
+        motor2.runToPosition();
         Serial.println("x");
       }
     }
@@ -77,25 +165,37 @@ void loop()
   }
 }
 
-// Moves stepper to target position and returns target
+// Moves stepper to target position (node, not nail) and returns target position
 int moveMotor(int target, int cur, float ratio)
 {
+  if (target == MAXNODE + 1)
+  {
+    target = 0;
+  }
+  if (target < 0)
+  {
+    target = MAXNODE;
+  }
   int difference = target - cur;
   if (difference > 100)
   {
-    motor1->step(int(abs(difference - 200) * ratio), BACKWARD, DOUBLE);
+    motor1.move(int(abs(difference - 200) * ratio * CCW));
+    motor1.runToPosition();
   }
   else if (difference < -100)
   {
-    motor1->step(int((difference + 200) * ratio), FORWARD, DOUBLE);
+    motor1.move(int((difference + 200) * ratio * CW));
+    motor1.runToPosition();
   }
   else if (difference > 0)
   {
-    motor1->step(int(difference * ratio), FORWARD, DOUBLE);
+    motor1.move(int(difference * ratio * CW));
+    motor1.runToPosition();
   }
   else if (difference < 0)
   {
-    motor1->step(int(abs(difference) * ratio), BACKWARD, DOUBLE);
+    motor1.move(int(abs(difference) * ratio * CCW));
+    motor1.runToPosition();
   }
   delay(5);
   return target;
