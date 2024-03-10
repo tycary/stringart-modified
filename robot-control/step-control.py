@@ -6,8 +6,8 @@ import serial
 gearRatio = 10.0
 
 # COM Settings
-comChannel = "com4"
-Baudrate = 19200
+comChannel = "com3"
+Baudrate = 115200
 to = 10  # Timeout
 
 # COM initializing

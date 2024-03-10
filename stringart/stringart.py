@@ -154,7 +154,7 @@ class StringArtGenerator:
             # continue from destination node as new start
             nail = darkest_nail
             if nail % 2 == 0:
-                nail += 1
+                nail -= 1
             else:
                 nail += -1
             if nail == self.nails:
