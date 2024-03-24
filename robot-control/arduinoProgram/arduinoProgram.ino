@@ -1,5 +1,15 @@
 #include <AccelStepper.h>
 
+// Instruction Key
+#define HOME 8000
+#define FORWARD 8000
+#define HOME 8000
+#define HOME 8000
+#define HOME 8000
+#define HOME 8000
+
+#define threaderPin 8
+
 #define motor1dirPin 2
 #define motor1stepPin 3
 #define motor2dirPin 4
