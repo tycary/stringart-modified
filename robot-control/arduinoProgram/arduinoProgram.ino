@@ -22,16 +22,18 @@
 #define encoderPin 10
 
 // Motor config
-#define motor1dirPin 2
-#define motor1stepPin 3
-#define motor2dirPin 4
-#define motor2stepPin 5
+#define motorWdirPin 2
+#define motorWstepPin 3
+#define motorTdirPin 4
+#define motorTstepPin 5
 #define motorInterfaceType 1
 #define SPR 200  // Num of steps per revolution
-#define motor1MicroStep 4
-#define motor2MicroStep 4
+#define motorWMicroStep 4
+#define motorTMicroStep 4
 #define MAXSPEED 1  // rps (MAX = 5.5)
 #define MAXACCEL 5  // rpss (norm = 20)
+#define THREADERSPEED 1  // rps (MAX = 5.5)
+#define THREADERACCEL 5  // rpss (norm = 20)
 
 // Disk config
 #define MAXNODE 199  // Change for num of nodes - 1
@@ -43,13 +45,13 @@
 #define BAUDRATE 115200  // Common rates: 9600, 19200, 38400, *115200*, 230400
 
 // Stepper motor objects
-AccelStepper motor1 = AccelStepper(motorInterfaceType, motor1stepPin, motor1dirPin);
-AccelStepper motor2 = AccelStepper(motorInterfaceType, motor2stepPin, motor2dirPin);
+AccelStepper motorW = AccelStepper(motorInterfaceType, motorWstepPin, motorWdirPin);
+AccelStepper motorT = AccelStepper(motorInterfaceType, motorTstepPin, motorTdirPin);
 
 // Encoder object
 AS5600 as5600;  //  use default Wire
 
-// Limit switch
+// Limit switch object
 ezButton limitSwitch(threaderPin);  // create ezButton object that attach to the pin;
 
 // Global Variables
@@ -59,15 +61,22 @@ float gearRatio;
 
 void setup() {
   Serial.begin(BAUDRATE);  // Common rates: 9600, 19200, 38400, *115200*, 230400
-  motor1.setMaxSpeed(MAXSPEED * motor1MicroStep * SPR);
-  motor2.setMaxSpeed(0.1 * motor2MicroStep * SPR);
-  motor1.setAcceleration(MAXACCEL * motor1MicroStep * SPR);
-  motor2.setAcceleration(20 * motor2MicroStep * SPR);
-  motor2.move(-8 * motor2MicroStep);
-  motor2.runToPosition();
+
+  // Motor setup
+  motorW.setMaxSpeed(MAXSPEED * motorWMicroStep * SPR);
+  motorT.setMaxSpeed(0.1 * motorTMicroStep * SPR);
+  motorW.setAcceleration(MAXACCEL * motorWMicroStep * SPR);
+  motorT.setAcceleration(20 * motorTMicroStep * SPR);
 
   limitSwitch.setDebounceTime(50);  // set debounce time to 50 millisecond
 
+  // Home threader
+  while (limitSwitch.getState() == HIGH) {
+    motorT.move(1 * motorTMicroStep * CCW);
+    motorT.runToPosition();
+  }
+
+  // Encoder setup
   as5600.begin(encoderPin);  //  set direction pin.
   as5600.setDirection(AS5600_CLOCK_WISE);
   as5600.resetPosition();
@@ -89,7 +98,7 @@ void setup() {
     }
   }
 
-  gearRatio = gearRatio * motor1MicroStep;
+  gearRatio = gearRatio * motorWMicroStep;
 }
 
 void loop() {
@@ -112,8 +121,8 @@ void handleInstruction(int instr) {
   switch (instr) {
     case HOME:
       curPos = 0;
-      motor1.moveTo(0);
-      motor1.runToPosition();
+      motorW.moveTo(0);
+      motorW.runToPosition();
       break;
     case PAUSE:
       break;
@@ -132,33 +141,33 @@ void handleInstruction(int instr) {
           loop = false;
         }
       }
-      gearRatio = gearRatio * motor1MicroStep;
+      gearRatio = gearRatio * motorWMicroStep;
       break;
     case FORWARD:
-      motor1.move(1 * gearRatio * CW);
-      motor1.runToPosition();
+      motorW.move(1 * gearRatio * CW);
+      motorW.runToPosition();
       break;
     case BACKWARD:
-      motor1.move(1 * gearRatio * CCW);
-      motor1.runToPosition();
+      motorW.move(1 * gearRatio * CCW);
+      motorW.runToPosition();
       break;
     case FORWARD360:
-      motor1.move(200 * gearRatio * CW);
-      motor1.runToPosition();
+      motorW.move(200 * gearRatio * CW);
+      motorW.runToPosition();
       break;
     case BACKWARD360:
-      motor1.move(200 * gearRatio * CCW);
-      motor1.runToPosition();
+      motorW.move(200 * gearRatio * CCW);
+      motorW.runToPosition();
       break;
     case TENROTATION:
-      motor1.move(2000 * gearRatio * CW);
-      motor1.runToPosition();
+      motorW.move(2000 * gearRatio * CW);
+      motorW.runToPosition();
       break;
     case ROTATIONS:
       for (int i = 0; i < 20; ++i)  // 20 rotations in 1 rotation increments
       {
-        motor1.move(200 * gearRatio * CW);
-        motor1.runToPosition();
+        motorW.move(200 * gearRatio * CW);
+        motorW.runToPosition();
       }
       break;
     default:
@@ -178,8 +187,8 @@ void execute(int instr) {
     nailos = 1;
   }
   curPos = moveMotor(trueinst, curPos, gearRatio);  // Move wheel to position
-  motor2.moveTo(8 * motor2MicroStep);               // Move threader down
-  motor2.runToPosition();
+  motorT.moveTo(8 * motorTMicroStep);               // Move threader down
+  motorT.runToPosition();
   delay(100);  // testing delays
   if (nailos == 0) {
     curPos = moveMotor(trueinst - 1, curPos, gearRatio);  // Move wheel to next nail
@@ -187,8 +196,8 @@ void execute(int instr) {
     curPos = moveMotor(trueinst + 1, curPos, gearRatio);  // Move wheel to next nail
   }
   delay(100);        // testing delays
-  motor2.moveTo(0);  // Move threader up
-  motor2.runToPosition();
+  motorT.moveTo(0);  // Move threader up
+  motorT.runToPosition();
   Serial.println("x");
 }
 
@@ -202,17 +211,17 @@ int moveMotor(int target, int cur, float ratio) {
   }
   int difference = target - cur;
   if (difference > 100) {
-    motor1.move(int(abs(difference - 200) * ratio * CCW));
-    motor1.runToPosition();
+    motorW.move(int(abs(difference - 200) * ratio * CCW));
+    motorW.runToPosition();
   } else if (difference < -100) {
-    motor1.move(int((difference + 200) * ratio * CW));
-    motor1.runToPosition();
+    motorW.move(int((difference + 200) * ratio * CW));
+    motorW.runToPosition();
   } else if (difference > 0) {
-    motor1.move(int(difference * ratio * CW));
-    motor1.runToPosition();
+    motorW.move(int(difference * ratio * CW));
+    motorW.runToPosition();
   } else if (difference < 0) {
-    motor1.move(int(abs(difference) * ratio * CCW));
-    motor1.runToPosition();
+    motorW.move(int(abs(difference) * ratio * CCW));
+    motorW.runToPosition();
   }
   delay(5);
   return target;
