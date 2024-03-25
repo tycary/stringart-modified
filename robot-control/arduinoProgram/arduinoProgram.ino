@@ -155,6 +155,7 @@ void handleInstruction(int instr)
         loop = false;
       }
     }
+    Serial.println("Ratio Set");
     gearRatio = gearRatio * motorWMicroStep;
     break;
   case FORWARD:
