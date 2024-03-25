@@ -166,6 +166,8 @@ void handleInstruction(int instr)
     motorW.runToPosition();
     break;
   case FORWARD360:
+    Serial.println("forward 360");
+
     motorW.move(200 * gearRatio * CW);
     motorW.runToPosition();
     break;
@@ -185,6 +187,7 @@ void handleInstruction(int instr)
     }
     break;
   case TESTTHREADER:
+    Serial.println("testing threader");
     moveThreaderDown();
     moveThreaderUp();
     break;
@@ -227,11 +230,13 @@ void execute(int instr)
 
 void moveThreaderDown()
 {
+  Serial.println("threader down");
   motorT.moveTo(THREADERARC * motorTMicroStep); // Move threader down
   motorT.runToPosition();
 }
 void moveThreaderUp()
 {
+  Serial.println("threader up");
   motorT.moveTo((THREADERARC - 1) * motorTMicroStep * -1); // Move threader up
   motorT.runToPosition();
 
