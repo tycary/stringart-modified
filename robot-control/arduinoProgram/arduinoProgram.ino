@@ -85,21 +85,7 @@ void setup()
   trueinst = 0;
   nailos = 0;
 
-  bool initial = true;
-
-  while (initial)
-  {           // Get gear ratio
-    delay(1); // Pause to read
-    while (Serial.available() > 0)
-    {
-      instructions = Serial.readStringUntil('\n');
-
-      gearRatio = instructions.toFloat();
-      initial = false;
-    }
-  }
-
-  gearRatio = gearRatio * motorWMicroStep;
+  handleInstruction(SETRATIO);
 }
 
 void loop()
