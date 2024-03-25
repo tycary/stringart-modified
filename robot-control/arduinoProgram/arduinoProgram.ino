@@ -69,7 +69,7 @@ void setup()
   motorW.setMaxSpeed(MAXSPEED * motorWMicroStep * SPR);
   motorT.setMaxSpeed(THREADERSPEED * motorTMicroStep * SPR);
   motorW.setAcceleration(MAXACCEL * motorWMicroStep * SPR);
-  motorT.setAcceleration(20 * motorTMicroStep * SPR);
+  motorT.setAcceleration(THREADERACCEL * motorTMicroStep * SPR);
 
   limitSwitch.setDebounceTime(50); // set debounce time to 50 millisecond
 
