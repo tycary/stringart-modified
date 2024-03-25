@@ -14,6 +14,7 @@
 #define BACKWARD360 8004
 #define TENROTATION 8010
 #define ROTATIONS 8021
+#define TESTTHREADER 8006
 
 // Limit switch pin
 #define threaderPin 8
@@ -30,10 +31,11 @@
 #define SPR 200  // Num of steps per revolution
 #define motorWMicroStep 4
 #define motorTMicroStep 4
-#define MAXSPEED 1  // rps (MAX = 5.5)
-#define MAXACCEL 5  // rpss (norm = 20)
+#define MAXSPEED 1       // rps (MAX = 5.5)
+#define MAXACCEL 5       // rpss (norm = 20)
 #define THREADERSPEED 1  // rps (MAX = 5.5)
 #define THREADERACCEL 5  // rpss (norm = 20)
+#define THREADERARC 8    // Num of steps to move down
 
 // Disk config
 #define MAXNODE 199  // Change for num of nodes - 1
@@ -64,20 +66,16 @@ void setup() {
 
   // Motor setup
   motorW.setMaxSpeed(MAXSPEED * motorWMicroStep * SPR);
-  motorT.setMaxSpeed(0.1 * motorTMicroStep * SPR);
+  motorT.setMaxSpeed(THREADERSPEED * motorTMicroStep * SPR);
   motorW.setAcceleration(MAXACCEL * motorWMicroStep * SPR);
   motorT.setAcceleration(20 * motorTMicroStep * SPR);
 
   limitSwitch.setDebounceTime(50);  // set debounce time to 50 millisecond
 
-  // Home threader
-  while (limitSwitch.getState() == HIGH) {
-    motorT.move(1 * motorTMicroStep * CCW);
-    motorT.runToPosition();
-  }
+  homeThreader();
 
-  // Encoder setup
-  as5600.begin(encoderPin);  //  set direction pin.
+    // Encoder setup
+    as5600.begin(encoderPin);  //  set direction pin.
   as5600.setDirection(AS5600_CLOCK_WISE);
   as5600.resetPosition();
 
@@ -102,7 +100,6 @@ void setup() {
 }
 
 void loop() {
-  limitSwitch.loop();  // MUST call the loop() function first
   while (Serial.available() == 0) {
     delay(1);  // Pause to read
     while (Serial.available() > 0) {
@@ -115,6 +112,24 @@ void loop() {
       handleInstruction(instr);
     }
   }
+}
+
+void homeThreader() {
+  limitSwitch.loop();  // MUST call the loop() function before getState()
+  // Slow speed down
+  motorT.setMaxSpeed(0.1 * motorTMicroStep * SPR);
+  motorT.setAcceleration(5 * motorTMicroStep * SPR);
+
+  while (limitSwitch.getState() == HIGH) {
+    limitSwitch.loop();  // MUST call the loop() function before getState()
+
+    motorT.move(0.5 * motorTMicroStep * -1);
+    motorT.runToPosition();
+  }
+
+  // Set norm speed
+  motorT.setMaxSpeed(THREADERSPEED * motorTMicroStep * SPR);
+  motorT.setAcceleration(THREADERACCEL * motorTMicroStep * SPR);
 }
 
 void handleInstruction(int instr) {
@@ -170,6 +185,10 @@ void handleInstruction(int instr) {
         motorW.runToPosition();
       }
       break;
+    case TESTTHREADER:
+      moveThreaderDown();
+      moveThreaderUp();
+      break;
     default:
       if (instr <= MAXNAIL && instr >= 0) {
         execute(instr);
@@ -187,18 +206,27 @@ void execute(int instr) {
     nailos = 1;
   }
   curPos = moveMotor(trueinst, curPos, gearRatio);  // Move wheel to position
-  motorT.moveTo(8 * motorTMicroStep);               // Move threader down
-  motorT.runToPosition();
+  moveThreaderDown();
   delay(100);  // testing delays
   if (nailos == 0) {
     curPos = moveMotor(trueinst - 1, curPos, gearRatio);  // Move wheel to next nail
   } else {
     curPos = moveMotor(trueinst + 1, curPos, gearRatio);  // Move wheel to next nail
   }
-  delay(100);        // testing delays
-  motorT.moveTo(0);  // Move threader up
-  motorT.runToPosition();
+  delay(100);  // testing delays
+  moveThreaderUp();
   Serial.println("x");
+}
+
+void moveThreaderDown() {
+  motorT.moveTo(THREADERARC * motorTMicroStep);  // Move threader down
+  motorT.runToPosition();
+}
+void moveThreaderUp() {
+  motorT.moveTo((THREADERARC - 1) * motorTMicroStep * -1);  // Move threader up
+  motorT.runToPosition();
+
+  homeThreader();
 }
 
 // Moves stepper to target position (node, not nail) and returns target position
