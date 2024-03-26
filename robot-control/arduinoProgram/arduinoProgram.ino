@@ -60,6 +60,7 @@ ezButton limitSwitch(threaderPin); // create ezButton object that attach to the 
 String instructions;
 int instr, curPos, baudrate, trueinst, nailos; // NailOffset == boolean is-Odd
 float gearRatio;
+bool lop = true;
 
 void setup()
 {
@@ -143,8 +144,8 @@ void handleInstruction(int instr)
     as5600.resetPosition();
     break;
   case SETRATIO:
-    bool loop = true;
-    while (loop)
+    lop = true;
+    while (lop)
     {           // Get gear ratio
       delay(1); // Pause to read
       while (Serial.available() > 0)
@@ -152,7 +153,7 @@ void handleInstruction(int instr)
         instructions = Serial.readStringUntil('\n');
 
         gearRatio = instructions.toFloat();
-        loop = false;
+        lop = false;
       }
     }
     Serial.println("Ratio Set");
